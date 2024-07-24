@@ -2,7 +2,7 @@
 --- MOD_NAME: VanillaExpansion
 --- MOD_ID: vanilla_expansion
 --- PREFIX: vanexp
---- MOD_AUTHOR: [joe]
+--- MOD_AUTHOR: [nekojoe]
 --- MOD_DESCRIPTION: adds stuff to the game, trying to keep it vanilla
 
 ----------------------------------------------
@@ -16,7 +16,17 @@ local discover_all = false
 
 function ben(info)
     if info then
-        sendTraceMessage(tostring(info), 'ben')
+        if type(info) == 'table' then
+            sendTraceMessage('no', 'ben')
+            for k, v in ipairs(info) do
+                sendTraceMessage('yes', 'ben')
+                sendTraceMessage(tostring(k), 'ben')
+                sendTraceMessage(tostring(v), 'ben')
+                sendTraceMessage('no', 'ben')
+            end
+        else
+            sendTraceMessage(tostring(info), 'ben')
+        end
     else
         sendTraceMessage('yes', 'ben')
     end
@@ -106,7 +116,7 @@ local j_professor = SMODS.Joker{
     calculate = function(self, card, context)
         if context.repetition then
             if context.cardarea == G.play then
-                if self.ability.name == 'Professor' and
+                if self.ability and self.ability.name == 'Professor' and
                 context.other_card:get_id() == 14 then
                     return {
                         message = localize('k_again_ex'),
@@ -163,7 +173,7 @@ local j_squared = SMODS.Joker{
     calculate = function(self, card, context)
         if context.individual then
             if context.cardarea == G.play then
-                if self.ability.name == 'Squared Joker' and
+                if self.ability and self.ability.name == 'Squared Joker' and
                 context.other_card:get_id() == 14 or
                 context.other_card:get_id() == 9 or
                 context.other_card:get_id() == 4
@@ -242,7 +252,7 @@ local j_jackpot = SMODS.Joker{
         if G.GAME.vanexp_jackpot_card then
             if context.individual then
                 if context.cardarea == G.play then
-                    if self.ability.name == 'Jackpot' and
+                    if self.ability and self.ability.name == 'Jackpot' and
                     -- wish i could think of a better way to do this
                     #context.full_hand == 3 and 
                     context.scoring_hand[1]:get_id() == G.GAME.vanexp_jackpot_card.id and
@@ -315,7 +325,7 @@ local j_clock = SMODS.Joker{
         if G.GAME.vanexp_clock_card then
             if context.repetition then
                 if context.cardarea == G.play then
-                    if self.ability.name == 'Calling the Clock' and
+                    if self.ability and self.ability.name == 'Calling the Clock' and
                     context.other_card:get_id() == G.GAME.vanexp_clock_card.id then
                         return {
                             message = localize('k_again_ex'),
